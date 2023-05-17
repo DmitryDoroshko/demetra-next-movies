@@ -1,5 +1,8 @@
 import {Box, Button, Grid, MenuItem, TextField, Typography} from "@mui/material";
 import {useState} from "react";
+import {useLazyGetMoviesByTitleQuery} from "@/services/movies.service";
+import {useAppDispatch} from "@/hooks/redux-hooks";
+import {setMoviesLoaded, setMoviesLoadingError} from "@/store/movies/moviesSlice";
 
 const plots = [
   {value: "movie-short", label: "Short"},
@@ -15,6 +18,9 @@ export default function SearchMovie() {
   const [enteredMovieTitle, setEnteredMovieTitle] = useState<string>("");
   const [enteredMovieYear, setEnteredMovieYear] = useState<string>("");
   const [enteredMoviePlot, setEnteredMoviePlot] = useState<"movie-short" | "movie-long">("movie-short");
+  const [triggerSearchMoviesByTitle] = useLazyGetMoviesByTitleQuery();
+
+  const dispatch = useAppDispatch();
 
   const enteredMovieTitleChangeHandler = ({target: {value}}) => {
     setEnteredMovieTitle(value);
@@ -28,8 +34,17 @@ export default function SearchMovie() {
     setEnteredMoviePlot(value);
   };
 
-  const formSubmitHandler = (event) => {
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
+
+    // TODO: Search for movies by title
+    if (enteredMovieTitle.trim().length > 0) {
+      const {data, error} = await triggerSearchMoviesByTitle(enteredMovieTitle);
+
+      console.log({data, error});
+      dispatch(setMoviesLoaded(data));
+      return;
+    }
   };
 
   return (

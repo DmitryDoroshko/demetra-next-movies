@@ -1,6 +1,6 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
-import {API_URL, API_KEY} from "@/lib/constants";
-import {IMovie} from "@/model/types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+import { API_URL, API_KEY } from "@/lib/constants";
+import { IMovie } from "@/model/types";
 
 const generateQueryStringWithTitle = (movieTitle: string) => {
   const queryInfo = movieTitle.toLowerCase().split(" ").join("+");
@@ -9,17 +9,20 @@ const generateQueryStringWithTitle = (movieTitle: string) => {
 
 export const moviesApi = createApi({
   reducerPath: "moviesApi",
-  baseQuery: fetchBaseQuery({baseUrl: API_URL}),
+  baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   tagTypes: ["Movies"],
   endpoints: (builder) => ({
     getMoviesByTitle: builder.query<IMovie[], string>({
       query: (movieTitle: string) => {
         const queryString = generateQueryStringWithTitle(movieTitle);
-        return {url: queryString};
+        return { url: queryString };
       },
-      providesTags: result => ["Movies"],
+      transformResponse: (response: { Search: Array<IMovie> }, meta, arg) =>
+        response.Search,
+      providesTags: (result) => ["Movies"],
     }),
   }),
 });
 
-export const {useGetMoviesByTitleQuery} = moviesApi;
+export const { useGetMoviesByTitleQuery, useLazyGetMoviesByTitleQuery } =
+  moviesApi;

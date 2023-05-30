@@ -1,12 +1,13 @@
 import {Grid} from "@mui/material";
 import {Roboto} from "next/font/google";
+import React from "react";
 
 const roboto = Roboto({
   weight: '400',
   subsets: ['latin'],
 })
 
-export default function Main({children}) {
+export default function Main({children}: {children: React.ReactNode}) {
   return (
       <main className={roboto.className}>
         <Grid

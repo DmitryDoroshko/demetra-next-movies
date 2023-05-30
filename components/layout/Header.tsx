@@ -87,30 +87,30 @@ function Header() {
     dispatch(setFilterMoviesValue(event.target.value));
   };
 
-  // TODO: Style the DemetraMovies Typography link as a valid Next.js LINk
   return (
     <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <LiveTvIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href={"/"}
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: "0",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            DemetraMovies
-          </Typography>
-
+          <Link href={"/"} legacyBehavior>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href={"/"}
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: "0",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              DemetraMovies
+            </Typography>
+          </Link>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"

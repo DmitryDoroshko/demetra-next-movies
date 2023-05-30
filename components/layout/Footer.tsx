@@ -5,8 +5,6 @@ export const Footer: FC = (): ReactElement => {
   return (
     <Box
       sx={{
-        position: "sticky",
-        bottom: 0,
         width: "100%",
         height: "auto",
         backgroundColor: "primary.main",

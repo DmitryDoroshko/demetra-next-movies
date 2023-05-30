@@ -3,3 +3,16 @@
   margin: 0;
   padding: 0;
 }
+
+.heart-icon {
+  transition: color 0.5s linear;
+}
+
+.heart-icon:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.heart-icon.active {
+  color: red;
+}

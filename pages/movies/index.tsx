@@ -1,35 +1,38 @@
 import SearchMovie from "@/components/search-movie/SearchMovie";
-import MoviesList from "@/components/movies/MoviesList";
-import { useLazyGetMoviesByTitleQuery } from "@/services/movies.service";
-import {useEffect, useState} from "react";
-import { useAppSelector } from "@/hooks/redux-hooks";
-import { selectSearchMovieTitleString } from "@/store/movies/moviesSlice";
+import MoviesList from "@/components/movies/regular-movies/MoviesList";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hooks";
+import { selectFavoriteMovies } from "@/store/favoriteMovies/favoriteMoviesSlice";
+import {
+  selectMoviesLoaded,
+  setMoviesLoaded,
+} from "@/store/movies/moviesSlice";
+import { useEffect } from "react";
+import { areTwoArraysEqual } from "@/helpers/check-equality";
 
 export default function MoviesPage() {
-  const searchMovieTitle = useAppSelector(selectSearchMovieTitleString);
-
-  const [moviesLoaded, setMoviesLoaded] = useState([]);
-  const [areMoviesLoading, setAreMoviesLoading] = useState(false);
-
-  // const { data, isLoading } = useLazyGetMoviesByTitleQuery(searchMovieTitle);
+  const favoriteMovies = useAppSelector(selectFavoriteMovies);
+  const moviesLoaded = useAppSelector(selectMoviesLoaded);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (searchMovieTitle && searchMovieTitle.trim().length > 0) {
-      const { data, isLoading } = useLazyGetMoviesByTitleQuery(searchMovieTitle);
-      setAreMoviesLoading(isLoading);
-
-      if (data) {
-
+    const moviesLoadedCopy = moviesLoaded.map((movie) => {
+      for (const favoriteMovie of favoriteMovies) {
+        if (movie.imdbID === favoriteMovie.imdbID) {
+          return { ...movie, IsLiked: true };
+        }
       }
-      setMoviesLoaded(data);
+      return movie;
+    });
+
+    if (!areTwoArraysEqual(moviesLoaded, moviesLoadedCopy)) {
+      dispatch(setMoviesLoaded(moviesLoadedCopy));
     }
-  }, [searchMovieTitle]);
+  }, [moviesLoaded, favoriteMovies]);
 
   return (
     <>
       <SearchMovie />
-      {!areMoviesLoading && <MoviesList movies={moviesLoaded} />}
-      {areMoviesLoading && <p>Loading...</p>}
+      <MoviesList />
     </>
   );
 }

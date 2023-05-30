@@ -1,73 +1,109 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IMovie } from "@/model/types";
+import { RootState } from "@/store";
+import { sortMovies } from "@/helpers/sort-movies";
 
 export interface IMoviesState {
   moviesLoaded: IMovie[];
+  moviesSorted: IMovie[];
+  moviesToDisplay: IMovie[];
   moviesLoading: boolean;
   moviesLoadingError: string | null;
   searchMovieTitleString: string | null;
   searchMovieYear: number | null;
-  searchMoviePlot: "movie-short" | "movie-long";
-  movieSortOrderValue: "movie-sort-descending" | "movie-sort-ascending";
+  searchMoviePlot: "movie-short" | "movie-full";
+  movieSortOrderValue:
+    | "movie-sort-not-sorted"
+    | "movie-sort-descending"
+    | "movie-sort-ascending";
+  filterMoviesValue: string;
 }
 
 const initialState: IMoviesState = {
   moviesLoaded: [],
+  moviesSorted: [],
+  moviesToDisplay: [],
   moviesLoading: false,
   moviesLoadingError: null,
   searchMovieTitleString: "",
   searchMovieYear: null,
   searchMoviePlot: "movie-short",
-  movieSortOrderValue: "movie-sort-descending",
+  movieSortOrderValue: "movie-sort-not-sorted",
+  filterMoviesValue: "",
 };
 
-const moviesSlice = createSlice({
+export const moviesSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {
-    setMoviesLoading(state: IMoviesState, { payload }: PayloadAction<boolean>) {
+    setMoviesLoading: (
+      state: IMoviesState,
+      { payload }: PayloadAction<boolean>
+    ) => {
       state.moviesLoading = payload;
     },
-    setMoviesLoadingError(
+    setMoviesLoadingError: (
       state: IMoviesState,
       { payload }: PayloadAction<string | null>
-    ) {
+    ) => {
       state.moviesLoadingError = payload;
     },
-    setMoviesLoadingSuccess(
+    setMoviesLoaded: (
       state: IMoviesState,
       { payload }: PayloadAction<IMovie[]>
-    ) {
+    ) => {
       state.moviesLoaded = payload;
+      state.moviesSorted = sortMovies(
+        state.moviesLoaded,
+        state.movieSortOrderValue
+      );
+      state.moviesToDisplay = [...state.moviesSorted];
     },
-    setMoviesLoaded(state: IMoviesState, { payload }: PayloadAction<IMovie[]>) {
-      state.moviesLoaded = payload;
-    },
-    setSearchMovieTitleString(
+    setSearchMovieTitleString: (
       state: IMoviesState,
       { payload }: PayloadAction<string>
-    ) {
+    ) => {
       state.searchMovieTitleString = payload;
     },
-    setSearchMovieYear(
+    setSearchMovieYear: (
       state: IMoviesState,
       { payload }: PayloadAction<number | null>
-    ) {
+    ) => {
       state.searchMovieYear = payload;
     },
-    setSearchMoviePlot(
+    setSearchMoviePlot: (
       state: IMoviesState,
-      { payload }: PayloadAction<"movie-short" | "movie-long">
-    ) {
+      { payload }: PayloadAction<"movie-short" | "movie-full">
+    ) => {
       state.searchMoviePlot = payload;
     },
-    setMovieSortOrderValue(
+    setMovieSortOrderValue: (
       state: IMoviesState,
       {
         payload,
-      }: PayloadAction<"movie-sort-descending" | "movie-sort-ascending">
-    ) {
+      }: PayloadAction<
+        | "movie-sort-not-sorted"
+        | "movie-sort-descending"
+        | "movie-sort-ascending"
+      >
+    ) => {
       state.movieSortOrderValue = payload;
+      state.moviesSorted = sortMovies(state.moviesLoaded, payload);
+      state.moviesToDisplay = [...state.moviesSorted];
+    },
+    setFilterMoviesValue: (
+      state: IMoviesState,
+      { payload }: PayloadAction<string>
+    ) => {
+      state.filterMoviesValue = payload;
+
+      if (payload.trim().length !== 0) {
+        state.moviesToDisplay = [...state.moviesLoaded].filter((movie) =>
+          movie.Title.toLowerCase().includes(payload.toLowerCase())
+        );
+      } else {
+        state.moviesToDisplay = [...state.moviesLoaded];
+      }
     },
   },
 });
@@ -75,20 +111,31 @@ const moviesSlice = createSlice({
 export const {
   setMoviesLoading,
   setMoviesLoadingError,
-  setMoviesLoadingSuccess,
   setMoviesLoaded,
   setSearchMovieTitleString,
   setSearchMovieYear,
   setSearchMoviePlot,
   setMovieSortOrderValue,
+  setFilterMoviesValue,
 } = moviesSlice.actions;
 
-export const selectMoviesLoaded = (state: IMoviesState) => state.moviesLoaded;
-export const selectMoviesLoading = (state: IMoviesState) => state.moviesLoading;
-export const selectMoviesLoadingError = (state: IMoviesState) =>
-  state.moviesLoadingError;
-export const selectSearchMovieTitleString = (state: IMoviesState) => state.searchMovieTitleString;
-export const selectSearchMovieYear = (state: IMoviesState) => state.searchMovieYear;
-export const selectSearchMoviePlot = (state: IMoviesState) => state.searchMoviePlot;
+export const selectMoviesLoaded = (state: RootState) =>
+  state.movies.moviesLoaded;
+export const selectMoviesLoading = (state: RootState) =>
+  state.movies.moviesLoading;
+export const selectMoviesLoadingError = (state: RootState) =>
+  state.movies.moviesLoadingError;
+export const selectSearchMovieTitleString = (state: RootState) =>
+  state.movies.searchMovieTitleString;
+export const selectSearchMovieYear = (state: RootState) =>
+  state.movies.searchMovieYear;
+export const selectSearchMoviePlot = (state: RootState) =>
+  state.movies.searchMoviePlot;
+export const selectMoviesSorted = (state: RootState) =>
+  state.movies.moviesSorted;
+export const selectMoviesToDisplay = (state: RootState) =>
+  state.movies.moviesToDisplay;
+export const selectFilterMoviesValue = (state: RootState) =>
+  state.movies.filterMoviesValue;
 
 export default moviesSlice.reducer;

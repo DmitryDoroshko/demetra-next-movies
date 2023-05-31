@@ -64,17 +64,11 @@ export const favoriteMoviesSlice = createSlice({
 
 export const {
   setFavoriteMovies,
-  setFavoriteMoviesLoading,
-  setFavoriteMoviesError,
   addFavoriteMovie,
   removeFavoriteMovie,
 } = favoriteMoviesSlice.actions;
 
 export const selectFavoriteMovies = (state: RootState) =>
   state.favoriteMovies.favoriteMoviesLoaded;
-export const selectFavoriteMoviesLoading = (state: RootState) =>
-  state.favoriteMovies.favoriteMoviesLoading;
-export const selectFavoriteMoviesError = (state: RootState) =>
-  state.favoriteMovies.favoriteMoviesError;
 
 export default favoriteMoviesSlice.reducer;

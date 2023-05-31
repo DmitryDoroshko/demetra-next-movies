@@ -97,7 +97,6 @@ export const demetraMoviesApi = createApi({
 });
 
 export const {
-  useGetMoviesByTitleQuery,
   useLazyGetMoviesByTitleQuery,
   useLazyGetSingleMovieByImdbIDQuery,
   useLazyGetMoviesByTitleAndYearQuery,

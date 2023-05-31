@@ -25,7 +25,6 @@ import {
 } from "@/store/movies/moviesSlice";
 import AlertDialogSlide from "@/components/ui/AlertDialogSlide";
 import { IMovie } from "@/model/types";
-import { areTwoArraysEqual } from "@/helpers/check-equality";
 import { selectFavoriteMovies } from "@/store/favoriteMovies/favoriteMoviesSlice";
 
 const plots = [
@@ -60,8 +59,8 @@ export default function SearchMovie() {
 
   const enteredMovieTitleChangeHandler = (event: any) => {
     const value = event.target.value;
-    dispatch(setSearchMovieTitleString(event.target.value));
-    setEnteredMovieTitle(event.target.value);
+    dispatch(setSearchMovieTitleString(value));
+    setEnteredMovieTitle(value);
   };
 
   const enteredMovieYearChangeHandler = (event: any) => {

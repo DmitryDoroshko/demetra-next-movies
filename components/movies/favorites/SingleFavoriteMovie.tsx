@@ -1,50 +1,12 @@
 import { Grid } from "@mui/material";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux-hooks";
-import {
-  addFavoriteMovie,
-  removeFavoriteMovie,
-  selectFavoriteMovies,
-} from "@/store/favoriteMovies/favoriteMoviesSlice";
+import { useAppSelector } from "@/hooks/redux-hooks";
+import { selectFavoriteMovies } from "@/store/favoriteMovies/favoriteMoviesSlice";
 import { IMovie } from "@/model/types";
-import {
-  extractFavoriteMoviesFromLocalStorage,
-  setFavoriteMoviesToLocalStorage,
-} from "@/helpers/local-storage";
 import FavoriteMovieCard from "@/components/movies/favorites/FavoriteMovieCard";
 
 export default function SingleFavoriteMovie(props: { movie: IMovie }) {
   const { movie } = props;
-  const [isMovieLiked, setIsMovieLiked] = useState(true);
-  const router = useRouter();
   const favoriteMovies = useAppSelector(selectFavoriteMovies);
-  const dispatch = useAppDispatch();
-  const goToSpecificMoviePageHandler = () => {
-    router.push(`/movies/details/${movie.imdbID}`);
-  };
-
-  const toggleMovieLikeHandler = () => {
-    setIsMovieLiked((prevState) => !prevState);
-    let favoriteMovies = extractFavoriteMoviesFromLocalStorage() || [];
-
-    if (isMovieLiked) {
-      dispatch(removeFavoriteMovie(movie.imdbID));
-      favoriteMovies = favoriteMovies.filter(
-        (favoriteMovie) => favoriteMovie.imdbID !== movie.imdbID
-      );
-    } else {
-      dispatch(addFavoriteMovie(movie as IMovie));
-      if (
-        !favoriteMovies.some(
-          (favoriteMovie) => favoriteMovie.imdbID === movie.imdbID
-        )
-      ) {
-        favoriteMovies.push(movie as IMovie);
-      }
-    }
-    setFavoriteMoviesToLocalStorage(favoriteMovies);
-  };
 
   if (favoriteMovies.length === 1) {
     return (

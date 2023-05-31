@@ -7,8 +7,7 @@ import {
 import { Grid, CircularProgress } from "@mui/material";
 import SingleMovieCard from "@/components/movies/regular-movies/SingleMovieCard";
 import MoviesPagination from "@/components/pagination/MoviesPagination";
-import { useEffect, useState } from "react";
-import { areTwoArraysEqual } from "@/helpers/check-equality";
+import { useState } from "react";
 
 export default function MoviesList() {
   const moviesToDisplay = useAppSelector(selectMoviesToDisplay);

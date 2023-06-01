@@ -9,6 +9,10 @@ interface FavoriteMoviesListProps {
 export default function FavoriteMoviesList({
   favoriteMovies,
 }: FavoriteMoviesListProps) {
+  if (!favoriteMovies) {
+    return <h1>Unfortunately, favorite movies are not available.</h1>;
+  }
+
   if (favoriteMovies.length === 0) {
     return <h1>No favorite movies yet.</h1>;
   }

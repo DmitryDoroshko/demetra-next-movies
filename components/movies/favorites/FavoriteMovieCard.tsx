@@ -34,7 +34,6 @@ export default function FavoriteMovieCard({ movie }: FavoriteMovieCardProps) {
     router.push(`/movies/details/${movie.imdbID}`);
   };
 
-  // TODO: Write this function
   const updateMoviesLoadedIfFavoriteMovieChangedInMoviesLoaded = (
     favoriteMovies: IMovie[]
   ) => {

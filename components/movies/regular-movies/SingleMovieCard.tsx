@@ -34,7 +34,6 @@ export default function SingleMovieCard({ movie }: SingleMovieCardProps) {
     router.push(`/movies/details/${movie.imdbID}`);
   };
 
-  // TODO: Write this function
   const updateMoviesLoadedIfFavoriteMovieChangedInMoviesLoaded = (
     favoriteMovies: IMovie[]
   ) => {
@@ -56,7 +55,6 @@ export default function SingleMovieCard({ movie }: SingleMovieCardProps) {
     dispatch(setMoviesLoaded(moviesUpdated as IMovie[]));
   };
 
-  // TODO: Check this function
   const toggleMovieLikeHandler = () => {
     let favoriteMoviesFromLocalStorage =
       extractFavoriteMoviesFromLocalStorage() || [];

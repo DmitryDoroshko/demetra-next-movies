@@ -48,7 +48,7 @@ export const favoriteMoviesSlice = createSlice({
           (movie) => movie.imdbID === payload.imdbID
         )
       ) {
-        state.favoriteMoviesLoaded = [...state.favoriteMoviesLoaded, payload];
+        state.favoriteMoviesLoaded = [...state.favoriteMoviesLoaded, {...payload, IsLiked: true}];
       }
     },
     removeFavoriteMovie: (

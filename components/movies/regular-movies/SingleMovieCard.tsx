@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button, Card, Typography, SvgIcon } from "@mui/material";
+import { Button, Card, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { useAppDispatch } from "@/hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hooks";
 import {
   addFavoriteMovie,
   removeFavoriteMovie,
@@ -16,32 +16,53 @@ import {
   extractFavoriteMoviesFromLocalStorage,
   setFavoriteMoviesToLocalStorage,
 } from "@/helpers/local-storage";
+import {
+  selectMoviesLoaded,
+  setMoviesLoaded,
+} from "@/store/movies/moviesSlice";
 
 type SingleMovieCardProps = {
-  movie: {
-    Poster: string;
-    Title: string;
-    imdbID: string;
-    Type: string;
-    Year: string | number;
-    IsLiked?: boolean | undefined;
-  };
+  movie: IMovie;
 };
 
 export default function SingleMovieCard({ movie }: SingleMovieCardProps) {
   const [isMovieLiked, setIsMovieLiked] = useState(movie.IsLiked || false);
+  const moviesLoaded = useAppSelector(selectMoviesLoaded);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const goToSpecificMoviePageHandler = () => {
     router.push(`/movies/details/${movie.imdbID}`);
   };
 
+  // TODO: Write this function
+  const updateMoviesLoadedIfFavoriteMovieChangedInMoviesLoaded = (
+    favoriteMovies: IMovie[]
+  ) => {
+    const moviesUpdated = moviesLoaded.map((movieLoaded) => {
+      let isMovieLiked = false;
+
+      if (!favoriteMovies || favoriteMovies.length === 0) {
+        return {...movieLoaded, IsLiked: false };
+      }
+
+      for (const favoriteMovie of favoriteMovies) {
+        if (movieLoaded.imdbID === favoriteMovie.imdbID) {
+          isMovieLiked = true;
+          break;
+        }
+      }
+      return { ...movieLoaded, IsLiked: isMovieLiked};
+    });
+    dispatch(setMoviesLoaded(moviesUpdated as IMovie[]));
+  };
+
+  // TODO: Check this function
   const toggleMovieLikeHandler = () => {
     let favoriteMoviesFromLocalStorage =
       extractFavoriteMoviesFromLocalStorage() || [];
 
     if (!isMovieLiked) {
-      dispatch(addFavoriteMovie(movie as IMovie));
+      dispatch(addFavoriteMovie({ ...movie, IsLiked: true }));
       if (
         !favoriteMoviesFromLocalStorage.some(
           (favoriteMovie) => favoriteMovie.imdbID === movie.imdbID
@@ -51,6 +72,9 @@ export default function SingleMovieCard({ movie }: SingleMovieCardProps) {
       }
       setIsMovieLiked((prevState) => !prevState);
       setFavoriteMoviesToLocalStorage(favoriteMoviesFromLocalStorage);
+      updateMoviesLoadedIfFavoriteMovieChangedInMoviesLoaded(
+        favoriteMoviesFromLocalStorage
+      );
       return;
     }
 
@@ -60,6 +84,9 @@ export default function SingleMovieCard({ movie }: SingleMovieCardProps) {
     );
     setIsMovieLiked((prevState) => !prevState);
     setFavoriteMoviesToLocalStorage(favoriteMoviesFromLocalStorage);
+    updateMoviesLoadedIfFavoriteMovieChangedInMoviesLoaded(
+      favoriteMoviesFromLocalStorage
+    );
   };
 
   return (
@@ -76,14 +103,14 @@ export default function SingleMovieCard({ movie }: SingleMovieCardProps) {
       }}
     >
       <Tooltip title={isMovieLiked ? "Remove like" : "Add like"}>
-          <FontAwesomeIcon
-            icon={faHeart}
-            size="2x"
-            color="lightblue"
-            className={`heart-icon ${isMovieLiked && "active"}`}
-            onClick={toggleMovieLikeHandler}
-            style={{marginBottom: "1rem"}}
-          />
+        <FontAwesomeIcon
+          icon={faHeart}
+          size="2x"
+          color="lightblue"
+          className={`heart-icon ${isMovieLiked && "active"}`}
+          onClick={toggleMovieLikeHandler}
+          style={{ marginBottom: "1rem" }}
+        />
       </Tooltip>
       <Image src={movie.Poster} alt={movie.Title} width={300} height={300} />
 

@@ -22,8 +22,6 @@ export default function MoviesPagination({
   });
 
   useEffect(() => {
-    console.log("MoviesPagination useEffect");
-    console.log({allAvailableMovies, from: pagination.from, to: pagination.to});
     const moviesMinified = allAvailableMovies.slice(pagination.from, pagination.to);
     setPagination({...pagination, count: allAvailableMovies.length})
     setMovies(moviesMinified);

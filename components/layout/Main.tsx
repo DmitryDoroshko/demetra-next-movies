@@ -17,7 +17,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
         direction={"column"}
         alignItems={"center"}
         justifyContent={"flex-start"}
-        style={{ minHeight: "100vh" }}
+        style={{ minHeight: "100vh", padding: "1rem" }}
       >
         <Grid item xs={3}>
           {children}

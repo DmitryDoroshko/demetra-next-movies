@@ -25,7 +25,7 @@ export default function MoviesPagination({
     const moviesMinified = allAvailableMovies.slice(pagination.from, pagination.to);
     setPagination({...pagination, count: allAvailableMovies.length})
     setMovies(moviesMinified);
-  }, [pagination.from, pagination.to]);
+  }, [pagination.from, pagination.to, allAvailableMovies]);
 
   const pageChangeHandler = (event: React.ChangeEvent<unknown>, page: number) => {
     const from = (page - 1) * pageSize;

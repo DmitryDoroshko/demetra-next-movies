@@ -70,7 +70,6 @@ function Header() {
   );
 
   const filterMovieString = useAppSelector(selectFilterMoviesValue);
-
   const dispatch = useAppDispatch();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {

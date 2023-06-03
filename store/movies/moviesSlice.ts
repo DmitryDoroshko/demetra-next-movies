@@ -36,18 +36,21 @@ export const moviesSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {
+
     setMoviesLoading: (
       state: IMoviesState,
       { payload }: PayloadAction<boolean>
     ) => {
       state.moviesLoading = payload;
     },
+
     setMoviesLoadingError: (
       state: IMoviesState,
       { payload }: PayloadAction<string | null>
     ) => {
       state.moviesLoadingError = payload;
     },
+
     setMoviesLoaded: (
       state: IMoviesState,
       { payload }: PayloadAction<IMovie[]>
@@ -57,8 +60,24 @@ export const moviesSlice = createSlice({
         state.moviesLoaded,
         state.movieSortOrderValue
       );
-      state.moviesToDisplay = [...state.moviesSorted];
+
+      if (!state.filterMoviesValue) {
+        state.moviesToDisplay = [...state.moviesSorted];
+        return;
+      }
+
+      const moviesFiltered = [...state.moviesLoaded].filter((movie) =>
+        movie.Title.toLowerCase().includes(
+          state.filterMoviesValue.toLowerCase()
+        )
+      );
+
+      state.moviesToDisplay = sortMovies(
+        moviesFiltered,
+        state.movieSortOrderValue
+      );
     },
+
     setSearchMovieTitleString: (
       state: IMoviesState,
       { payload }: PayloadAction<string>
@@ -89,7 +108,21 @@ export const moviesSlice = createSlice({
     ) => {
       state.movieSortOrderValue = payload;
       state.moviesSorted = sortMovies(state.moviesLoaded, payload);
-      state.moviesToDisplay = [...state.moviesSorted];
+
+      if (!state.filterMoviesValue) {
+        state.moviesToDisplay = [...state.moviesSorted];
+        return;
+      }
+
+      const moviesFiltered = [...state.moviesLoaded].filter((movie) =>
+        movie.Title.toLowerCase().includes(
+          state.filterMoviesValue.toLowerCase()
+        )
+      );
+      state.moviesToDisplay = sortMovies(
+        moviesFiltered,
+        state.movieSortOrderValue
+      );
     },
     setFilterMoviesValue: (
       state: IMoviesState,
@@ -97,13 +130,21 @@ export const moviesSlice = createSlice({
     ) => {
       state.filterMoviesValue = payload;
 
-      if (payload.trim().length !== 0) {
-        state.moviesToDisplay = [...state.moviesLoaded].filter((movie) =>
-          movie.Title.toLowerCase().includes(payload.toLowerCase())
+      if (payload.trim().length === 0) {
+        state.moviesToDisplay = sortMovies(
+          state.moviesLoaded,
+          state.movieSortOrderValue
         );
-      } else {
-        state.moviesToDisplay = [...state.moviesLoaded];
+        return;
       }
+
+      const moviesFiltered = [...state.moviesLoaded].filter((movie) =>
+        movie.Title.toLowerCase().includes(payload.toLowerCase())
+      );
+      state.moviesToDisplay = sortMovies(
+        moviesFiltered,
+        state.movieSortOrderValue
+      );
     },
   },
 });

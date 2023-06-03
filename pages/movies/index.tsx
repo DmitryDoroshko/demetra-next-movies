@@ -16,6 +16,10 @@ export default function MoviesPage() {
 
   useEffect(() => {
     const moviesLoadedCopy = moviesLoaded.map((movie) => {
+      if (!favoriteMovies) {
+        return movie;
+      }
+
       for (const favoriteMovie of favoriteMovies) {
         if (movie.imdbID === favoriteMovie.imdbID) {
           return { ...movie, IsLiked: true };
